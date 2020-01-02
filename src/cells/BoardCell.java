@@ -41,6 +41,4 @@ public abstract class BoardCell {
 		unrevaled.apply(this);
 		return null;
 	}
-	
-	
 }

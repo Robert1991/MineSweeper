@@ -13,7 +13,9 @@ import cells.RegularCell;
 import coordinates.FieldCoordinates;
 
 public class Board {
+
 	public Map<FieldCoordinates, BoardCell> cells;
+
 	
 	public Board() {
 		cells = new TreeMap<FieldCoordinates, BoardCell>();

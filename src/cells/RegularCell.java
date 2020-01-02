@@ -1,6 +1,5 @@
 package cells;
 import java.util.function.Supplier;
-
 import board.AdjacentBombs;
 
 public class RegularCell extends BoardCell {
