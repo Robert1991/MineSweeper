@@ -1,5 +1,6 @@
 package cells;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class BoardCell {
@@ -10,7 +11,8 @@ public abstract class BoardCell {
 	
 	public abstract Void revealIdentity();
 
-	public Void Reveal() {
+	public Void reveal() {
+		System.out.println("revealed!");
 		wasRevealed = true;
 		return null;
 	}
@@ -22,5 +24,23 @@ public abstract class BoardCell {
 		}
 		return null;
 	}
+	
+	public Void ifNotRevealed(Supplier<?> notRevealed) {
+		if (!wasRevealed) {
+			notRevealed.get(); 
+			return null;
+		}
+		return null;
+	}
+	
+	public Void ifRevealed(Function<BoardCell,?> revealed, Function<BoardCell, ?> unrevaled) {
+		if (wasRevealed) {
+			revealed.apply(this); 
+			return null;
+		}
+		unrevaled.apply(this);
+		return null;
+	}
+	
 	
 }

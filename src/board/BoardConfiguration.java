@@ -23,7 +23,7 @@ public class BoardConfiguration {
 		return board;
 	}
 	
-	public void printBoard(Board board) {
+	public void printInDimension(Board board) {
 		board.forEachCell((coordinates, cell) -> {
 			coordinates.sameX(boardDimension.xScale(), () -> printEnd(cell), () -> printCell(cell));
 		});

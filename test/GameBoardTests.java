@@ -12,7 +12,7 @@ public class GameBoardTests {
 		GameBoard board = GameBoard.createFrom(new BoardConfiguration(BombCount.Of(3), new BoardDimension(5, 5)));
 		board.putBoardToConsole();
 		System.out.println("-----------------");
-		board.reveal(FieldCoordinates.createFor(3, 3));
+		board.reveal(FieldCoordinates.createFor(5, 5));
 		board.putBoardToConsole();
 		System.out.println("-----------------");
 		board.revealBoard();

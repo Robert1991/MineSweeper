@@ -1,15 +1,16 @@
 package cells;
 import java.util.function.Supplier;
 
-import board.Neighbourhood;
+import board.AdjacentBombs;
 
 public class RegularCell extends BoardCell {
 	private final String identity = ".";
-	private Neighbourhood neighbourhoodBombs = Neighbourhood.notSet();
+	private AdjacentBombs neighborhoodBombs = AdjacentBombs.notSet();
 
-	public void wasRevealedWith(Neighbourhood bombs) {
+	public Void wasRevealedWith(AdjacentBombs bombs) {
 		this.wasRevealed = true;
-		this.neighbourhoodBombs = bombs;
+		this.neighborhoodBombs = bombs;
+		return null;
 	}
 	
 	@Override
@@ -28,7 +29,7 @@ public class RegularCell extends BoardCell {
 	}
 
 	private void printRevealed() {
-		neighbourhoodBombs.whenBombs(() -> neighbourhoodBombs.printCount(),
+		neighborhoodBombs.whenBombs(() -> neighborhoodBombs.printCount(),
 									 () -> printIdentity());
 	}
 
@@ -40,7 +41,7 @@ public class RegularCell extends BoardCell {
 	@Override
 	public Void revealIdentity() {
 		this.wasRevealed = true;
-		this.neighbourhoodBombs = Neighbourhood.notSet();
+		this.neighborhoodBombs = AdjacentBombs.notSet();
 		return null;
 	}
 }

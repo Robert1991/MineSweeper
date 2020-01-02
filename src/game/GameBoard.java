@@ -1,32 +1,27 @@
 package game;
-import board.Board;
 import board.BoardConfiguration;
+import board.BoardController;
 import board.BombExploded;
-import board.CellRevealer;
-import cells.RegularCell;
 import coordinates.FieldCoordinates;
 
 public class GameBoard {
-	private Board board;
-	private BoardConfiguration configuration;
+	private BoardController boardController;
 
 	public static GameBoard createFrom(BoardConfiguration configuration) {
 		return new GameBoard(configuration);
 	}
 	
 	public GameBoard(BoardConfiguration configuration) {
-		this.board = configuration.createBoard();
-		this.configuration = configuration;
+		this.boardController = new BoardController(configuration);
 	}
 	
 	public void putBoardToConsole() {
-		configuration.printBoard(board);
+		boardController.printBoard();
 	}
 	
 	public GameStatus reveal(FieldCoordinates coordinates) {
 		try {
-			board.revealCell(coordinates, (bombCell) -> bombCell.explode(),
-										  (regularCell) -> revealCell(regularCell, coordinates));
+			boardController.reveal(coordinates, (bombCell) -> bombCell.explode());
 			return GameStatus.OnGoing;
 		} catch(BombExploded exc) {
 			System.out.println("you looser");
@@ -36,13 +31,6 @@ public class GameBoard {
 	}
 	
 	public void revealBoard() {
-		board.forEachCell((coordinates, cell) -> cell.revealIdentity());
-		configuration.printBoard(board);
-	}
-	
-	private Void revealCell(RegularCell cell, FieldCoordinates coordinates) {
-		CellRevealer revealer = new CellRevealer(board);
-		revealer.reveal(cell, coordinates);
-		return null;
+		boardController.revealBoard();
 	}
 }

@@ -1,5 +1,4 @@
 package board;
-import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
@@ -14,7 +13,7 @@ import cells.RegularCell;
 import coordinates.FieldCoordinates;
 
 public class Board {
-	private Map<FieldCoordinates, BoardCell> cells;
+	public Map<FieldCoordinates, BoardCell> cells;
 	
 	public Board() {
 		cells = new TreeMap<FieldCoordinates, BoardCell>();
@@ -24,22 +23,39 @@ public class Board {
 		cells.put(coordinates, cell);
 	}
 	
-	public void allRevealed(Supplier<?> revealCase, Supplier<?> baseCase) {
-		someCovered(revealCase);
-	}
-
-	public void revealCell(FieldCoordinates coordinates, Function<BombCell, ?> bombCase, 
-											  			 Function<RegularCell, ?> regularCase) {
+	public Void fetchCell(FieldCoordinates coordinates, Function<BombCell, ?> bombCase, 
+			Function<RegularCell, ?> regularCase) {
 		BoardCell cell = cells.get(coordinates);
 		if (cell instanceof BombCell) {
 			bombCase.apply((BombCell) cell);
+			return null;
 		}
 		regularCase.apply((RegularCell) cell);
+		return null;
+	}
+	
+	public BoardCell fetchCell(FieldCoordinates coordinates) {
+		return cells.get(coordinates);
+	}
+	
+	
+	public NeighborHood neighborHoodOf(FieldCoordinates coordinates) {
+		NeighborHood neighbors = NeighborHood.create();
+		forNeighbours(coordinates, 
+				(neighborcell, neighborCoordinates) -> neighbors.put(neighborCoordinates, 
+																	 neighborcell));
+		return neighbors;
 	}
 	
 	public Void forNeighbours(FieldCoordinates coordinates, BiFunction<BoardCell, FieldCoordinates, ?> action) {
-		forEachCell((boardCoordinates, cell) -> coordinates.ifNeighbor(boardCoordinates, 
-				() -> action.apply(cell, boardCoordinates)));
+		forEachCell((boardCoordinates, cell) -> 
+				coordinates.ifNeighbor(boardCoordinates, () -> action.apply(cell, boardCoordinates)));
+		return null;
+	}
+	
+	public Void forRegularNeighbours(FieldCoordinates coordinates, BiFunction<RegularCell, FieldCoordinates, ?> action) {
+		forEachCell((boardCoordinates, cell) -> 
+				coordinates.ifNeighbor(boardCoordinates, applyIfRegular(action, boardCoordinates, cell)));
 		return null;
 	}
 
@@ -51,10 +67,10 @@ public class Board {
 		cells.values().forEach(cellConsumer);
 	}
 	
-	private void someCovered(Supplier<?> revealCase) {
-		Collection<BoardCell> boardCells = cells.values();
-		final UncoveredCount count = new UncoveredCount();
-		boardCells.forEach(field -> field.ifRevealed(() -> count.increase()));
-		count.ifAllUncovered(boardCells, revealCase);
+	private Supplier<?> applyIfRegular(BiFunction<RegularCell, FieldCoordinates, ?> action, 
+			FieldCoordinates boardCoordinates, BoardCell cell) {
+		if (cell instanceof RegularCell)
+			return () -> action.apply((RegularCell)cell, boardCoordinates);
+		return () -> null;
 	}
 }
